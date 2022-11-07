@@ -9,7 +9,16 @@ const api = axios.create({
 })
 
 //UTILITIES
-function createMovies(container, movies) {
+const lazyLoader = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+            const url = entry.target.getAttribute('data-img')
+            entry.target.setAttribute('src', url)
+        }
+    });
+});
+
+function createMovies(container, movies, lazyLoad = false) {
     container.innerHTML = "";
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
@@ -22,10 +31,14 @@ function createMovies(container, movies) {
         movieImg.classList.add('movie-img');
         movieImg.setAttribute('alt', movie.title);
         movieImg.setAttribute(
-            'src', 
+            lazyLoad ? 'data-img' : 'src', 
             'https://image.tmdb.org/t/p/w300/' + movie.poster_path
         );
 
+        if (lazyLoad) {
+            lazyLoader.observe(movieImg);
+        }
+        
         movieContainer.appendChild(movieImg);
         container.appendChild(movieContainer)
     });
@@ -53,7 +66,7 @@ function createCategories(container, categories) {
 async function getTrendingMoviesPreview() {
     const { data } = await api.get('trending/movie/day');
     const movies = data.results;
-    createMovies(trendingMoviesPreviewList, movies);
+    createMovies(trendingMoviesPreviewList, movies, true);
 }
 
 async function getCategoriesPreview () {
