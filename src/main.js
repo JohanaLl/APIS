@@ -34,7 +34,12 @@ function createMovies(container, movies, lazyLoad = false) {
             lazyLoad ? 'data-img' : 'src', 
             'https://image.tmdb.org/t/p/w300/' + movie.poster_path
         );
-
+        movieImg.addEventListener('error', () => {
+            movieImg.setAttribute(
+                'src', 
+                'https://nbcpalmsprings.com/wp-content/uploads/sites/8/2021/12/BEST-MOVIES-OF-2021.jpeg'
+            );
+        });
         if (lazyLoad) {
             lazyLoader.observe(movieImg);
         }
@@ -82,7 +87,7 @@ async function getMoviesByCategory(id) {
         }
     });
     const movies = data.results;
-    createMovies(genericSection, movies);
+    createMovies(genericSection, movies, true);
 }
 
 async function getMoviesBySearch(query) {
