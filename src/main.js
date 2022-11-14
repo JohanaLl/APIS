@@ -33,9 +33,6 @@ function createMovies(
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
-        movieContainer.addEventListener('click', () => {
-            location.hash = '#movie=' + movie.id;
-        })
 
         const movieImg = document.createElement('img');
         movieImg.classList.add('movie-img');
@@ -50,11 +47,23 @@ function createMovies(
                 'https://nbcpalmsprings.com/wp-content/uploads/sites/8/2021/12/BEST-MOVIES-OF-2021.jpeg'
             );
         });
+        movieImg.addEventListener('click', () => {
+            location.hash = '#movie=' + movie.id;
+        })
+
+        const movieBtn = document.createElement('button');
+        movieBtn.classList.add('movie-btn');
+        movieBtn.addEventListener('click', () => {
+            movieBtn.classList.toggle('movie-btn--liked')
+            //agregar pelicula al LS
+        })
+
         if (lazyLoad) {
             lazyLoader.observe(movieImg);
         }
         
         movieContainer.appendChild(movieImg);
+        movieContainer.appendChild(movieBtn)
         container.appendChild(movieContainer)
     });
 }
