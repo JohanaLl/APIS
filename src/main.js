@@ -18,8 +18,18 @@ const lazyLoader = new IntersectionObserver((entries) => {
     });
 });
 
-function createMovies(container, movies, lazyLoad = false) {
-    container.innerHTML = "";
+function createMovies(
+    container, 
+    movies, 
+    {
+        lazyLoad = false, 
+        clean = true,
+    } = {},
+) {
+    if (clean) {
+        container.innerHTML = "";
+    }
+    
     movies.forEach(movie => {
         const movieContainer = document.createElement('div');
         movieContainer.classList.add('movie-container');
@@ -103,7 +113,48 @@ async function getMoviesBySearch(query) {
 async function getTrendingMovies() {
     const { data } = await api.get('trending/movie/day');
     const movies = data.results;
-    createMovies(genericSection, movies);
+    maxPage = data.total_pages;
+    createMovies(
+        genericSection, 
+        movies, 
+        { lazyLoad: true, },
+    );
+    
+    // const btnLoadmore = document.createElement('button');
+    // btnLoadmore.innerText = 'Cargar más';
+    // btnLoadmore.addEventListener('click', getPaginatedTrendingMovies)
+    // genericSection.appendChild(btnLoadmore);
+}
+
+async function getPaginatedTrendingMovies() {
+    const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+    } = document.documentElement;
+
+    const scrollBottom = (scrollTop + clientHeight) >= (scrollHeight - 15);
+    const pageIsNotMax = page < maxPage;
+
+    if (scrollBottom && pageIsNotMax) {
+        page++;
+        const { data } = await api.get('trending/movie/day', {
+            params: {
+                page,
+            },
+        });
+        const movies = data.results;
+        createMovies(
+            genericSection, 
+            movies, 
+            { lazyLoad: true, clean: false },
+        );
+    }
+
+    // const btnLoadmore = document.createElement('button');
+    // btnLoadmore.innerText = 'Cargar más';
+    // btnLoadmore.addEventListener('click', getPaginatedTrendingMovies)
+    // genericSection.appendChild(btnLoadmore);
 }
 
 async function getMovieById(id) {
