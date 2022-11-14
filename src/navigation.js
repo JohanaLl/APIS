@@ -79,13 +79,15 @@ function categoryPage() {
     categoriesPreviewSection.classList.add('inactive');
     genericSection.classList.remove('inactive');
     movieDetailSection.classList.add('inactive');
-
+                                                                                                                                            
     const [_, categoryData] = location.hash.split('=');
     const [id, name] = categoryData.split('-');
 
     headerCategoryTitle.innerHTML = name;
     //Función asincrona que consume la API
     getMoviesByCategory(id);
+
+    infiniteScroll = getPaginatedMoviesByCategory(id);
 }
 
 function moviePage() {
