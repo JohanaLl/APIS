@@ -8,6 +8,34 @@ const api = axios.create({
     },
 })
 
+/**Devuelve el objeto de películas guardadas en el local storage */
+function likedMoviesList () {
+    const item = JSON.parse(localStorage.getItem('liked_movies'));
+    let movies;
+
+    if (item) {
+        movies = item;
+    } else {
+        movies= {};
+    }
+    return movies
+}
+
+function likeMovie (movie) {
+    const likedMovies = likedMoviesList();
+
+    /**Si la pelicula esta en el local estorage se remueve, 
+     * si no esta se agrega
+     */
+    if (likedMovies[movie.id]) {
+        likedMovies[movie.id] = undefined;
+    } else {
+        likedMovies[movie.id] = movie
+    }
+
+    localStorage.setItem('liked_movies', JSON.stringify(likedMovies))
+}
+
 //UTILITIES
 const lazyLoader = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -53,9 +81,10 @@ function createMovies(
 
         const movieBtn = document.createElement('button');
         movieBtn.classList.add('movie-btn');
+        likedMoviesList()[movie.id] && movieBtn.classList.add('movie-btn--liked')
         movieBtn.addEventListener('click', () => {
             movieBtn.classList.toggle('movie-btn--liked')
-            //agregar pelicula al LS
+            likeMovie(movie)
         })
 
         if (lazyLoad) {
@@ -248,3 +277,14 @@ async function getRelatedMoviesId(id) {
 
 }
 
+/**Funcion para consumir el local storage y agregarla a la sección */
+function getLikedMovies() {
+    /**obtener la lista de peliculas del local storage */
+    const likedMovies = likedMoviesList();
+    const moviesArray = Object.values(likedMovies);
+    
+    createMovies(likedMoviesListArticle, moviesArray, 
+        { lazyLoad: true, clean: true, })
+
+    console.log(moviesArray);
+}

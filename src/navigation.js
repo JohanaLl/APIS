@@ -63,7 +63,8 @@ function homePage() {
 
     //Funciones asincronas que consumen la API
     getTrendingMoviesPreview();
-    getCategoriesPreview ();    
+    getCategoriesPreview ();   
+    getLikedMovies(); 
 }
 
 function categoryPage() {
