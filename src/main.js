@@ -5,8 +5,12 @@ const api = axios.create({
     },
     params: {
         'api_key': API_KEY,
+        'language': navigator.language || "es-ES",
     },
 })
+
+/**Lenguaje de la aplicación */
+const lang = navigator.language.split('-')[0];
 
 /**Devuelve el objeto de películas guardadas en el local storage */
 function likedMoviesList () {
@@ -84,8 +88,10 @@ function createMovies(
         likedMoviesList()[movie.id] && movieBtn.classList.add('movie-btn--liked')
         movieBtn.addEventListener('click', () => {
             movieBtn.classList.toggle('movie-btn--liked')
-            likeMovie(movie)
+            likeMovie(movie);
+            getLikedMovies();
         })
+
 
         if (lazyLoad) {
             lazyLoader.observe(movieImg);
