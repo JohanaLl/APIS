@@ -103,5 +103,5 @@ dist
 # TernJS port file
 .tern-port
 
-# data.js
-src/data.js
+# # data.js
+# src/data.js
